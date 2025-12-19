@@ -72,6 +72,7 @@ SET(LMMS_PLUGIN_LIST
 	Vestige
 	VstEffect
 	Watsyn
+	Waver
 	WaveShaper
 	Vectorscope
 	Vibed
