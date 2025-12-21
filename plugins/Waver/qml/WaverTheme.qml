@@ -1,12 +1,10 @@
-pragma Singleton
-
 import QtQuick 2.15
 
 QtObject {
     property color primaryColor: "#4CAF50"
     property color secondaryColor: "#FF5722"
-    property color textColor: "#333333"
-    property color backgroundColor: "#f0f0f0"
+    property color textColor: "#ffffff"
+    property color backgroundColor: '#181818'
     property color buttonColor: "#2196F3"
     property color buttonTextColor: "#ffffff"
     property real fontSize: 14
@@ -16,3 +14,24 @@ QtObject {
         console.log("WaverTheme loaded")
     }
 }
+
+/*QtObject {
+    id: singleton
+
+    property color primaryColor: "#4CAF50"
+    property color secondaryColor: "#FF5722"
+    property color textColor: "#333333"
+    property color backgroundColor: "#f0f0f0"
+    property color buttonColor: "#2196F3"
+    property color buttonTextColor: "#ffffff"
+    property real fontSize: 14
+
+    // Make sure we only have one instance
+    Component.onCompleted: {
+        if (singleton === undefined) {
+            singleton = this;
+            console.log("WaverTheme loaded")
+        }
+    }
+}
+*/

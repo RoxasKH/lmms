@@ -17,9 +17,23 @@ ColumnLayout {
     Button {
         text: "Another Button"
         Layout.fillWidth: true
+        onClicked: console.log("Another button clicked!")
+    }
+
+    WaverButton {
+        Layout.fillWidth: true  // This will make WaverButton fill the width of the layout
+        text: "Settings"  // Custom title
+        iconSource: ""  // Custom icon path
+        // Custom click action (when the button is clicked)
         onClicked: {
-            console.log("Another button clicked!")
+            console.log("Settings button clicked!")
+            // Additional code or actions you want to trigger on click
         }
+    }
+
+    WaverExample {
+        text: "Text text test text"
+        Layout.fillWidth: true
     }
 
     // Other QML elements
