@@ -37,6 +37,7 @@ namespace lmms {
     class Waver : public Instrument
     {
         Q_OBJECT
+        Q_PROPERTY(QString name READ name)
 
         public slots:
             void updateFile(QString file);
@@ -54,12 +55,16 @@ namespace lmms {
             QString nodeName() const override;
             gui::PluginView* instantiateView(QWidget* parent) override;
 
+            QString name() const { return m_name; }
+
         private:
             FloatModel m_noteThreshold;
             FloatModel m_fadeOutFrames;
             IntModel m_originalBPM;
             ComboBoxModel m_sliceSnap;
             BoolModel m_enableSync;
+
+            QString m_name = "Waver";
 
             Sample m_originalSample;
 

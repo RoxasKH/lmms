@@ -38,7 +38,7 @@ ColumnLayout {
 
     // Other QML elements
     Text {
-        text: "This text will also adjust"
+        text: waverModel.name
         Layout.fillWidth: true
     }
 }

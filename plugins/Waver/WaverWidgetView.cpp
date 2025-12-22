@@ -70,12 +70,13 @@ namespace lmms {
 
             // Set up the QQuickWidget
             QQuickWidget *quickWidget = new QQuickWidget(this);
-            quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
-            quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-            layout->addWidget(quickWidget);
 
             // Expose the model to QML
             quickWidget->rootContext()->setContextProperty("waverModel", instrument);
+
+            quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
+            quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+            layout->addWidget(quickWidget);
 
             // Ensure QML root object is resized with the widget
             quickWidget->setMinimumSize(QSize(0, 0)); 
