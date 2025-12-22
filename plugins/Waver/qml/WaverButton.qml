@@ -31,7 +31,7 @@ Button {
         implicitWidth: 100
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
-        color: control.down ? theme.buttonColor : "#ffffff"
+        color: control.down ? theme.buttonColor : "transparent"
         border.color: control.down ? theme.buttonColor : theme.buttonColor
         border.width: 1
         radius: 2

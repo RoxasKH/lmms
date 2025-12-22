@@ -72,7 +72,13 @@ namespace lmms {
             QQuickWidget *quickWidget = new QQuickWidget(this);
 
             // Expose the model to QML
+            // Use setInitialProperties() once on QT6 for better performance
             quickWidget->rootContext()->setContextProperty("waverModel", instrument);
+
+            qmlRegisterUncreatableType<Waver>(
+                "Waver", 1, 0, "Waver",
+                "Instrument is provided by C++"
+            );
 
             quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
             quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
