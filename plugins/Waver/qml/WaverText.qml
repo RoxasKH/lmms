@@ -11,6 +11,5 @@ Text {
 
     text: qsTr("Default Text")
     color: theme.textColor
-    font.bold: true
-    font.pointSize: 18
+    font.pointSize: 14
 }

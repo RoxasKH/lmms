@@ -29,7 +29,7 @@ Button {
 
     background: Rectangle {
         implicitWidth: 100
-        implicitHeight: 40
+        implicitHeight: 50
         opacity: enabled ? 1 : 0.3
         color: control.down ? theme.buttonColor : "transparent"
         border.color: control.down ? theme.buttonColor : theme.buttonColor

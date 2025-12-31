@@ -67,6 +67,9 @@ namespace lmms {
 
             QVBoxLayout *layout = new QVBoxLayout(this);
             setLayout(layout);
+            // Remove default layout margins/spacing
+            layout->setContentsMargins(0, 0, 0, 0);
+            layout->setSpacing(0);
 
             // Set up the QQuickWidget
             QQuickWidget *quickWidget = new QQuickWidget(this);
@@ -83,9 +86,6 @@ namespace lmms {
             quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
             quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
             layout->addWidget(quickWidget);
-
-            // Ensure QML root object is resized with the widget
-            quickWidget->setMinimumSize(QSize(0, 0)); 
 
             setLayout(layout); 
 
