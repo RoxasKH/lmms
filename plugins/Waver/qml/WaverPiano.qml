@@ -45,14 +45,6 @@ Item {
         model: 7  // Black keys for C#, D#, F#, G#, A#
         Rectangle {
 
-            property var validIndices: ({
-                1: true,
-                3: true,
-                6: true,
-                8: true,
-                10: true
-            })
-
             width: piano.blackKeyWidth
             height: piano.height * 0.6  // Black keys are shorter
             color: piano.blackKeyColor
@@ -63,7 +55,6 @@ Item {
                 // This defines the position based on white keys
                 var whiteKeyIndex = [0, 1, 3, 4, 5, 7, 8]; // Indices of white keys where black keys should go (C#, D#, F#, G#, A#)
                 var xPosition = whiteKeyIndex[index] * piano.whiteKeyWidth + piano.whiteKeyWidth - (piano.blackKeyWidth / 2);
-                console.log("key", index, "position", xPosition);
                 return xPosition;
             }
 
