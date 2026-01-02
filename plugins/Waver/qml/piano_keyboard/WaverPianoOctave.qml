@@ -24,23 +24,9 @@ Item {
         Repeater {
             model: 7  // White keys for C, D, E, F, G, A, B
 
-            Button {
-                id: whiteKey
-
+            WaverPianoWhiteKey {
                 width: piano.whiteKeyWidth
                 height: piano.height
-                
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: whiteKey.down ? theme.colors.activeKeyStart : theme.colors.whiteKey }
-                        GradientStop { position: 1.0; color: whiteKey.down ? theme.colors.activeKeyStop : theme.colors.whiteKey }
-                    }
-                    border.color: theme.colors.keyBorder
-                }
-
-                onClicked: {
-                    console.log("White key", index, "pressed")
-                }
             }
         }
 
@@ -52,19 +38,9 @@ Item {
         z: 1
         model: 5  // Black keys for C#, D#, F#, G#, A#
 
-        Button {
-            id: blackKey
-
+        WaverPianoBlackKey {
             width: piano.blackKeyWidth
             height: piano.height * 0.6  // Black keys are shorter
-
-            background: Rectangle {
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: blackKey.down ? theme.colors.activeKeyStart : theme.colors.blackKeyStart }
-                    GradientStop { position: 1.0; color: blackKey.down ? theme.colors.activeKeyStop : theme.colors.blackKeyStop }
-                }
-                border.color: theme.colors.keyBorder
-            }
 
             // Set the X position of each black key explicitly
             x: {
@@ -72,10 +48,6 @@ Item {
                 var whiteKeyIndex = [0, 1, 3, 4, 5, 7, 8]; // Indices of white keys where black keys should go (C#, D#, F#, G#, A#)
                 var xPosition = whiteKeyIndex[index] * piano.whiteKeyWidth + piano.whiteKeyWidth - (piano.blackKeyWidth / 2);
                 return xPosition;
-            }
-
-            onClicked: {
-                console.log("Black key", index, "pressed")
             }
         }
         
