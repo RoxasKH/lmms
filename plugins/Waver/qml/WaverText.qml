@@ -10,6 +10,6 @@ Text {
     }
 
     text: qsTr("Default Text")
-    color: theme.textColor
-    font.pointSize: 14
+    color: theme.colors.text
+    font.pointSize: theme.typography.body
 }

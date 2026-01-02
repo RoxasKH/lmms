@@ -6,8 +6,6 @@ Button {
     id: control
     text: qsTr("Default Title")
 
-    property string iconSource: ""          // Icon source path
-
     width: parent.width
     height: 50
 
@@ -20,7 +18,7 @@ Button {
         text: control.text
         font: control.font
         opacity: enabled ? 1.0 : 0.3
-        color: control.down ? theme.buttonTextColor : "#21be2b"
+        color: control.down ? theme.colors.text : "#21be2b"
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -30,8 +28,8 @@ Button {
         implicitWidth: 100
         implicitHeight: 50
         opacity: enabled ? 1 : 0.3
-        color: control.down ? theme.buttonColor : "transparent"
-        border.color: control.down ? theme.buttonColor : theme.buttonColor
+        color: control.down ? theme.colors.border : "transparent"
+        border.color: theme.colors.border
         border.width: 1
         radius: 2
     }

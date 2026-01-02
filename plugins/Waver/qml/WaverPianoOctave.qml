@@ -12,10 +12,8 @@ Item {
     }
 
     // Colors for the keys
-    property color whiteKeyColor: "white"
-    property color blackKeyColor: "black"
     property real whiteKeyWidth: piano.width / 7  // Divide width into 7 parts for keys
-    property real blackKeyWidth: whiteKeyWidth * 0.6  // Black keys will be a bit smaller
+    property real blackKeyWidth: whiteKeyWidth * 0.7  // Black keys will be a bit smaller
 
     // White keys layout
     Row {
@@ -33,8 +31,11 @@ Item {
                 height: piano.height
                 
                 background: Rectangle {
-                    color: whiteKey.down ? theme.primaryColor : piano.whiteKeyColor
-                    border.color: whiteKey.down ? theme.primaryColor : "black"
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: whiteKey.down ? theme.colors.activeKeyStart : theme.colors.whiteKey }
+                        GradientStop { position: 1.0; color: whiteKey.down ? theme.colors.activeKeyStop : theme.colors.whiteKey }
+                    }
+                    border.color: theme.colors.keyBorder
                 }
 
                 onClicked: {
@@ -58,8 +59,11 @@ Item {
             height: piano.height * 0.6  // Black keys are shorter
 
             background: Rectangle {
-                color: blackKey.down ? theme.primaryColor : piano.blackKeyColor
-                border.color: blackKey.down ? theme.primaryColor : "black"
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: blackKey.down ? theme.colors.activeKeyStart : theme.colors.blackKeyStart }
+                    GradientStop { position: 1.0; color: blackKey.down ? theme.colors.activeKeyStop : theme.colors.blackKeyStop }
+                }
+                border.color: theme.colors.keyBorder
             }
 
             // Set the X position of each black key explicitly

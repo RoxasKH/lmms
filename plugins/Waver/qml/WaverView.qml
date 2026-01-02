@@ -10,13 +10,13 @@ Rectangle {
     }
 
     anchors.fill: parent
-    color: theme.backgroundColor
+    color: theme.colors.background
 
     // Use ColumnLayout for vertical layout
     ColumnLayout {
         id: column
         anchors.fill: parent
-        anchors.margins: 20
+        anchors.margins: theme.spacing.m
 
         WaverContainer {
             WaverText {
@@ -30,55 +30,49 @@ Rectangle {
 
             ColumnLayout {
                 anchors.fill: parent
+                spacing: 0
 
-                WaverButton {
-                    text: "Settings"  // Custom title
-                    iconSource: ""  // Custom icon path
-                    // Custom click action (when the button is clicked)
-                    onClicked: {
-                        console.log("Settings button clicked!")
-                        // Additional code or actions you want to trigger on click
+                WaverFrame {
+                    title: qsTr("Sample")
+
+                    content: ColumnLayout {
+                        WaverButton {
+                            text: "Settings"  // Custom title
+                            // Custom click action (when the button is clicked)
+                            onClicked: {
+                                console.log("Settings button clicked!")
+                                // Additional code or actions you want to trigger on click
+                            }
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 10
+
+                            WaverKnob {
+                                label: qsTr("Knob")
+                                Layout.alignment: Qt.AlignTop
+                            }
+
+                            WaverKnob {
+                                label: qsTr("Super cool other knob")
+                                Layout.alignment: Qt.AlignTop
+                            }
+                        }
                     }
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 10
-
-                    WaverKnob {
-                        label: qsTr("Knob")
-                        Layout.alignment: Qt.AlignTop
-                    }
-
-                    WaverKnob {
-                        label: qsTr("Super cool other knob")
-                        Layout.alignment: Qt.AlignTop
+                WaverFrame {
+                    title: qsTr("Sample map")
+                    
+                    content: ColumnLayout {
+                        WaverGrid {}
+                        //WaverPianoOctave {}
+                        WaverPiano {}
                     }
                 }
             }
-        }
-
-        
-
-        WaverContainer {
-            Layout.fillWidth: true
-
-            WaverFrame {
-                anchors.fill: parent
-
-                title: qsTr("Sample map")
-                
-                content: ColumnLayout {
-                    WaverGrid {}
-                    //WaverPianoOctave {}
-                    WaverPiano {}
-                }
-            }
-        }
-
-        WaverText {
-            text: "Text text test text"
-            Layout.fillWidth: true
+            
         }
 
     }

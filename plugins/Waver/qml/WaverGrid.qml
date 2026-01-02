@@ -14,6 +14,10 @@ GridLayout {
 
     width: parent.width
 
+    WaverTheme {
+        id: theme
+    }
+
     Repeater {
         model: gridColumns * gridRows
 
@@ -33,7 +37,7 @@ GridLayout {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                color: "#444"
+                color: theme.colors.border
             }
 
             // TOP border (only first row)
@@ -43,7 +47,7 @@ GridLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                color: "#444"
+                color: theme.colors.border
             }
 
             // RIGHT border (always)
@@ -52,7 +56,7 @@ GridLayout {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                color: "#444"
+                color: theme.colors.border
             }
 
             // BOTTOM border (always)
@@ -61,7 +65,7 @@ GridLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                color: "#444"
+                color: theme.colors.border
             }
         }
     }
