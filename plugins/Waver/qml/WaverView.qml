@@ -70,6 +70,7 @@ Rectangle {
                 
                 content: ColumnLayout {
                     WaverGrid {}
+                    //WaverPianoOctave {}
                     WaverPiano {}
                 }
             }

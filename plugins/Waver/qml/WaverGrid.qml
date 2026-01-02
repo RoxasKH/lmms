@@ -5,7 +5,7 @@ GridLayout {
     id: table
 
     property int gridHeight: 100
-    property int gridColumns: 88
+    property int gridColumns: 120
     property int gridRows: 2
 
     columns: gridColumns

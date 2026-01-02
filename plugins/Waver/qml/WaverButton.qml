@@ -7,7 +7,6 @@ Button {
     text: qsTr("Default Title")
 
     property string iconSource: ""          // Icon source path
-    property var onClickAction: null        // Custom action for the button click (a function)
 
     width: parent.width
     height: 50
