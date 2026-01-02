@@ -2,11 +2,11 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 GridLayout {
-    id: table
+    id: grid
 
-    property int gridHeight: 100
-    property int gridColumns: 120
-    property int gridRows: 2
+    property int gridColumns: 4
+    property int gridRows: 4
+    property color gridColor: theme.colors.border 
 
     columns: gridColumns
     rowSpacing: 0
@@ -23,12 +23,11 @@ GridLayout {
 
         Item {
             Layout.fillWidth: true
-            //Layout.fillHeight: true
-            height: gridHeight / 2
+            Layout.fillHeight: true
 
             // column & row index
-            property int col: index % table.columns
-            property int row: Math.floor(index / table.columns)
+            property int col: index % grid.columns
+            property int row: Math.floor(index / grid.columns)
 
             // LEFT border (only first column)
             Rectangle {
@@ -37,7 +36,7 @@ GridLayout {
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                color: theme.colors.border
+                color: gridColor
             }
 
             // TOP border (only first row)
@@ -47,7 +46,7 @@ GridLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                color: theme.colors.border
+                color: gridColor
             }
 
             // RIGHT border (always)
@@ -56,7 +55,7 @@ GridLayout {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                color: theme.colors.border
+                color: gridColor
             }
 
             // BOTTOM border (always)
@@ -65,7 +64,7 @@ GridLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                color: theme.colors.border
+                color: gridColor
             }
         }
     }

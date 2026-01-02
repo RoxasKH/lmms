@@ -27,6 +27,7 @@ Rectangle {
 
         WaverContainer {
             Layout.fillWidth: true
+            Layout.fillHeight: true
 
             ColumnLayout {
                 anchors.fill: parent
@@ -34,20 +35,33 @@ Rectangle {
 
                 WaverFrame {
                     title: qsTr("Sample")
+                    Layout.fillHeight: true
 
                     content: ColumnLayout {
-                        WaverButton {
-                            text: "Settings"  // Custom title
-                            // Custom click action (when the button is clicked)
-                            onClicked: {
-                                console.log("Settings button clicked!")
-                                // Additional code or actions you want to trigger on click
+                        spacing: theme.spacing.l
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            color: theme.colors.containerDark
+
+                            WaverGrid {
+                                anchors.fill: parent
+                                gridColumns: 10
+                                gridRows: 4
+                                gridColor: theme.colors.primaryDark
+                            }
+
+                            Image {
+                                anchors.fill: parent
+                                source: ""
+                                z: 1
                             }
                         }
 
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 10
+                            spacing: theme.spacing.s
 
                             WaverKnob {
                                 label: qsTr("Knob")
@@ -58,6 +72,16 @@ Rectangle {
                                 label: qsTr("Super cool other knob")
                                 Layout.alignment: Qt.AlignTop
                             }
+
+                            WaverButton {
+                                text: qsTr("Settings")  // Custom title
+                                // Custom click action (when the button is clicked)
+                                onClicked: {
+                                    console.log("Settings button clicked!")
+                                    // Additional code or actions you want to trigger on click
+                                }
+                                Layout.alignment: Qt.AlignTop
+                            }
                         }
                     }
                 }
@@ -66,8 +90,11 @@ Rectangle {
                     title: qsTr("Sample map")
                     
                     content: ColumnLayout {
-                        WaverGrid {}
-                        //WaverPianoOctave {}
+                        WaverGrid {
+                            height: 100
+                            gridColumns: 120
+                            gridRows: 2
+                        }
                         WaverPiano {}
                     }
                 }

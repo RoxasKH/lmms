@@ -37,6 +37,8 @@ ColumnLayout {
     Frame {
         id: frame
         Layout.fillWidth: true
+        // Sync the container height with the frame height
+        Layout.fillHeight: layout.Layout.fillHeight
 
         leftPadding: theme.spacing.l
         rightPadding: theme.spacing.l
@@ -56,4 +58,3 @@ ColumnLayout {
     }
 
 }
-

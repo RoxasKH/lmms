@@ -18,7 +18,7 @@ Button {
         text: control.text
         font: control.font
         opacity: enabled ? 1.0 : 0.3
-        color: control.down ? theme.colors.text : "#21be2b"
+        color: control.down ? theme.colors.text : theme.colors.textDark
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -28,10 +28,8 @@ Button {
         implicitWidth: 100
         implicitHeight: 50
         opacity: enabled ? 1 : 0.3
-        color: control.down ? theme.colors.border : "transparent"
-        border.color: theme.colors.border
-        border.width: 1
-        radius: 2
+        color: control.down ? theme.colors.primary : theme.colors.border
+        radius: 5
     }
 
 }
