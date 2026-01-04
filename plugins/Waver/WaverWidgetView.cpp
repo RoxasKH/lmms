@@ -63,7 +63,7 @@ namespace lmms {
             setAutoFillBackground(true);
 
             setMaximumSize(QSize(10000, 10000));
-            setMinimumSize(QSize(750, 600));
+            setMinimumSize(QSize(850, 600));
 
             QVBoxLayout *layout = new QVBoxLayout(this);
             setLayout(layout);
