@@ -40,127 +40,127 @@
 
 namespace lmms {
 
-    extern "C" {
-        Plugin::Descriptor PLUGIN_EXPORT waver_plugin_descriptor = {
-            LMMS_STRINGIFY(PLUGIN_NAME),
-            "Waver",
-            QT_TRANSLATE_NOOP("PluginBrowser", "MultiSampler"),
-            "RoxasKH <asketch36@gmail.com>",
-            0x0100,
-            Plugin::Type::Instrument,
-            new PluginPixmapLoader("logo"),
-            nullptr,
-            nullptr,
-        };
-    } // end extern
+extern "C" {
+    Plugin::Descriptor PLUGIN_EXPORT waver_plugin_descriptor = {
+        LMMS_STRINGIFY(PLUGIN_NAME),
+        "Waver",
+        QT_TRANSLATE_NOOP("PluginBrowser", "MultiSampler"),
+        "RoxasKH <asketch36@gmail.com>",
+        0x0100,
+        Plugin::Type::Instrument,
+        new PluginPixmapLoader("logo"),
+        nullptr,
+        nullptr,
+    };
+} // end extern
 
-    Waver::Waver(InstrumentTrack* instrumentTrack)
-        : Instrument(instrumentTrack, &waver_plugin_descriptor)
-        , m_noteThreshold(0.6f, 0.0f, 2.0f, 0.01f, this, tr("Note threshold"))
-        , m_fadeOutFrames(10.0f, 0.0f, 100.0f, 0.1f, this, tr("FadeOut"))
-        , m_originalBPM(1, 1, 999, this, tr("Original bpm"))
-        , m_sliceSnap(this, tr("Slice snap"))
-        , m_enableSync(false, this, tr("BPM sync"))
-        , m_originalSample()
-        , m_parentTrack(instrumentTrack)
+Waver::Waver(InstrumentTrack* instrumentTrack)
+    : Instrument(instrumentTrack, &waver_plugin_descriptor)
+    , m_noteThreshold(0.6f, 0.0f, 2.0f, 0.01f, this, tr("Note threshold"))
+    , m_fadeOutFrames(10.0f, 0.0f, 100.0f, 0.1f, this, tr("FadeOut"))
+    , m_originalBPM(1, 1, 999, this, tr("Original bpm"))
+    , m_sliceSnap(this, tr("Slice snap"))
+    , m_enableSync(false, this, tr("BPM sync"))
+    , m_originalSample()
+    , m_parentTrack(instrumentTrack)
+{
+    m_sliceSnap.addItem("Off");
+    m_sliceSnap.addItem("1/1");
+    m_sliceSnap.addItem("1/2");
+    m_sliceSnap.addItem("1/4");
+    m_sliceSnap.addItem("1/8");
+    m_sliceSnap.addItem("1/16");
+    m_sliceSnap.addItem("1/32");
+    m_sliceSnap.setValue(0);
+}
+
+void Waver::updateFile(QString file)
+{
+    if (auto buffer = gui::SampleLoader::createBufferFromFile(file)) { m_originalSample = Sample(std::move(buffer)); }
+
+    emit dataChanged();
+}
+
+void Waver::loadFile(const QString& file)
+{
+    updateFile(file);
+}
+
+void Waver::saveSettings(QDomDocument& document, QDomElement& element)
+{
+    element.setAttribute("version", "1");
+    element.setAttribute("src", m_originalSample.sampleFile());
+    if (m_originalSample.sampleFile().isEmpty())
     {
-        m_sliceSnap.addItem("Off");
-        m_sliceSnap.addItem("1/1");
-        m_sliceSnap.addItem("1/2");
-        m_sliceSnap.addItem("1/4");
-        m_sliceSnap.addItem("1/8");
-        m_sliceSnap.addItem("1/16");
-        m_sliceSnap.addItem("1/32");
-        m_sliceSnap.setValue(0);
+        element.setAttribute("sampledata", m_originalSample.toBase64());
     }
 
-    void Waver::updateFile(QString file)
+    element.setAttribute("totalSlices", static_cast<int>(m_slicePoints.size()));
+    for (auto i = std::size_t{0}; i < m_slicePoints.size(); i++)
     {
-        if (auto buffer = gui::SampleLoader::createBufferFromFile(file)) { m_originalSample = Sample(std::move(buffer)); }
-
-        emit dataChanged();
+        element.setAttribute(tr("slice_%1").arg(i), m_slicePoints[i]);
     }
 
-    void Waver::loadFile(const QString& file)
+    m_fadeOutFrames.saveSettings(document, element, "fadeOut");
+    m_noteThreshold.saveSettings(document, element, "threshold");
+    m_originalBPM.saveSettings(document, element, "origBPM");
+    m_enableSync.saveSettings(document, element, "syncEnable");
+}
+
+void Waver::loadSettings(const QDomElement& element)
+{
+    if (auto srcFile = element.attribute("src"); !srcFile.isEmpty())
     {
-        updateFile(file);
-    }
-
-    void Waver::saveSettings(QDomDocument& document, QDomElement& element)
-    {
-        element.setAttribute("version", "1");
-        element.setAttribute("src", m_originalSample.sampleFile());
-        if (m_originalSample.sampleFile().isEmpty())
+        if (QFileInfo(PathUtil::toAbsolute(srcFile)).exists())
         {
-            element.setAttribute("sampledata", m_originalSample.toBase64());
-        }
-
-        element.setAttribute("totalSlices", static_cast<int>(m_slicePoints.size()));
-        for (auto i = std::size_t{0}; i < m_slicePoints.size(); i++)
-        {
-            element.setAttribute(tr("slice_%1").arg(i), m_slicePoints[i]);
-        }
-
-        m_fadeOutFrames.saveSettings(document, element, "fadeOut");
-        m_noteThreshold.saveSettings(document, element, "threshold");
-        m_originalBPM.saveSettings(document, element, "origBPM");
-        m_enableSync.saveSettings(document, element, "syncEnable");
-    }
-
-    void Waver::loadSettings(const QDomElement& element)
-    {
-        if (auto srcFile = element.attribute("src"); !srcFile.isEmpty())
-        {
-            if (QFileInfo(PathUtil::toAbsolute(srcFile)).exists())
-            {
-                auto buffer = gui::SampleLoader::createBufferFromFile(srcFile);
-                m_originalSample = Sample(std::move(buffer));
-            }
-            else
-            {
-                QString message = tr("Sample not found: %1").arg(srcFile);
-                Engine::getSong()->collectError(message);
-            }
-        }
-        else if (auto sampleData = element.attribute("sampledata"); !sampleData.isEmpty())
-        {
-            auto buffer = gui::SampleLoader::createBufferFromBase64(sampleData);
+            auto buffer = gui::SampleLoader::createBufferFromFile(srcFile);
             m_originalSample = Sample(std::move(buffer));
         }
-
-        if (!element.attribute("totalSlices").isEmpty())
+        else
         {
-            int totalSlices = element.attribute("totalSlices").toInt();
-            m_slicePoints = {};
-            for (int i = 0; i < totalSlices; i++)
-            {
-                m_slicePoints.push_back(element.attribute(tr("slice_%1").arg(i)).toFloat());
-            }
+            QString message = tr("Sample not found: %1").arg(srcFile);
+            Engine::getSong()->collectError(message);
         }
-
-        m_fadeOutFrames.loadSettings(element, "fadeOut");
-        m_noteThreshold.loadSettings(element, "threshold");
-        m_originalBPM.loadSettings(element, "origBPM");
-        m_enableSync.loadSettings(element, "syncEnable");
-
-        emit dataChanged();
     }
-
-    QString Waver::nodeName() const
+    else if (auto sampleData = element.attribute("sampledata"); !sampleData.isEmpty())
     {
-        return waver_plugin_descriptor.name;
+        auto buffer = gui::SampleLoader::createBufferFromBase64(sampleData);
+        m_originalSample = Sample(std::move(buffer));
     }
 
-    gui::PluginView* Waver::instantiateView(QWidget* parent)
+    if (!element.attribute("totalSlices").isEmpty())
     {
-        return new gui::WaverWidgetView(this, parent);
-    }
-
-    extern "C" {
-        PLUGIN_EXPORT Plugin* lmms_plugin_main(Model* m, void*)
+        int totalSlices = element.attribute("totalSlices").toInt();
+        m_slicePoints = {};
+        for (int i = 0; i < totalSlices; i++)
         {
-            return new Waver(static_cast<InstrumentTrack*>(m));
+            m_slicePoints.push_back(element.attribute(tr("slice_%1").arg(i)).toFloat());
         }
-    } // extern
+    }
+
+    m_fadeOutFrames.loadSettings(element, "fadeOut");
+    m_noteThreshold.loadSettings(element, "threshold");
+    m_originalBPM.loadSettings(element, "origBPM");
+    m_enableSync.loadSettings(element, "syncEnable");
+
+    emit dataChanged();
+}
+
+QString Waver::nodeName() const
+{
+    return waver_plugin_descriptor.name;
+}
+
+gui::PluginView* Waver::instantiateView(QWidget* parent)
+{
+    return new gui::WaverWidgetView(this, parent);
+}
+
+extern "C" {
+    PLUGIN_EXPORT Plugin* lmms_plugin_main(Model* m, void*)
+    {
+        return new Waver(static_cast<InstrumentTrack*>(m));
+    }
+} // extern
 
 } // namespace lmms

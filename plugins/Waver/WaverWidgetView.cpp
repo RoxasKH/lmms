@@ -52,93 +52,93 @@ You have to install qt5-declarative qt5-quickcontrols2
 
 namespace lmms {
 
-    namespace gui {
+namespace gui {
 
-        WaverWidgetView::WaverWidgetView(Waver* instrument, QWidget* parent)
-            : InstrumentView(instrument, parent)
-            , m_waverParent(instrument)
+WaverWidgetView::WaverWidgetView(Waver* instrument, QWidget* parent)
+    : InstrumentView(instrument, parent)
+    , m_waverParent(instrument)
+{
+    // window settings
+    setAcceptDrops(true);
+    setAutoFillBackground(true);
+
+    setMaximumSize(QSize(10000, 10000));
+    setMinimumSize(QSize(850, 600));
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    setLayout(layout);
+    // Remove default layout margins/spacing
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    // Set up the QQuickWidget
+    QQuickWidget *quickWidget = new QQuickWidget(this);
+
+    // Expose the model to QML
+    // Use setInitialProperties() once on QT6 for better performance
+    quickWidget->rootContext()->setContextProperty("waverModel", instrument);
+
+    qmlRegisterUncreatableType<Waver>(
+        "Waver", 1, 0, "Waver",
+        "Instrument is provided by C++"
+    );
+
+    quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
+    quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    layout->addWidget(quickWidget);
+
+    setLayout(layout); 
+
+    update();
+}
+
+void WaverWidgetView::openFiles()
+{
+    const auto audioFile = SampleLoader::openAudioFile();
+    if (audioFile.isEmpty()) { return; }
+    m_waverParent->updateFile(audioFile);
+}
+
+// all the drag stuff is copied from AudioFileProcessor
+void WaverWidgetView::dragEnterEvent(QDragEnterEvent* dee)
+{
+    // For mimeType() and MimeType enum class
+    using namespace Clipboard;
+
+    if (dee->mimeData()->hasFormat(mimeType(MimeType::StringPair)))
+    {
+        QString txt = dee->mimeData()->data(mimeType(MimeType::StringPair));
+        if (txt.section(':', 0, 0) == QString("clip_%1").arg(static_cast<int>(Track::Type::Sample)))
         {
-            // window settings
-            setAcceptDrops(true);
-            setAutoFillBackground(true);
-
-            setMaximumSize(QSize(10000, 10000));
-            setMinimumSize(QSize(850, 600));
-
-            QVBoxLayout *layout = new QVBoxLayout(this);
-            setLayout(layout);
-            // Remove default layout margins/spacing
-            layout->setContentsMargins(0, 0, 0, 0);
-            layout->setSpacing(0);
-
-            // Set up the QQuickWidget
-            QQuickWidget *quickWidget = new QQuickWidget(this);
-
-            // Expose the model to QML
-            // Use setInitialProperties() once on QT6 for better performance
-            quickWidget->rootContext()->setContextProperty("waverModel", instrument);
-
-            qmlRegisterUncreatableType<Waver>(
-                "Waver", 1, 0, "Waver",
-                "Instrument is provided by C++"
-            );
-
-            quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
-            quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-            layout->addWidget(quickWidget);
-
-            setLayout(layout); 
-
-            update();
+            dee->acceptProposedAction();
         }
+        else if (txt.section(':', 0, 0) == "samplefile") { dee->acceptProposedAction(); }
+        else { dee->ignore(); }
+    }
+    else { dee->ignore(); }
+}
 
-        void WaverWidgetView::openFiles()
-        {
-            const auto audioFile = SampleLoader::openAudioFile();
-            if (audioFile.isEmpty()) { return; }
-            m_waverParent->updateFile(audioFile);
-        }
+void WaverWidgetView::dropEvent(QDropEvent* de)
+{
+    QString type = StringPairDrag::decodeKey(de);
+    QString value = StringPairDrag::decodeValue(de);
+    if (type == "samplefile")
+    {
+        // set m_wf wave file
+        m_waverParent->updateFile(value);
+        return;
+    }
+    else if (type == QString("clip_%1").arg(static_cast<int>(Track::Type::Sample)))
+    {
+        DataFile dataFile(value.toUtf8());
+        m_waverParent->updateFile(dataFile.content().firstChild().toElement().attribute("src"));
+        de->accept();
+        return;
+    }
 
-        // all the drag stuff is copied from AudioFileProcessor
-        void WaverWidgetView::dragEnterEvent(QDragEnterEvent* dee)
-        {
-            // For mimeType() and MimeType enum class
-            using namespace Clipboard;
+    de->ignore();
+}
 
-            if (dee->mimeData()->hasFormat(mimeType(MimeType::StringPair)))
-            {
-                QString txt = dee->mimeData()->data(mimeType(MimeType::StringPair));
-                if (txt.section(':', 0, 0) == QString("clip_%1").arg(static_cast<int>(Track::Type::Sample)))
-                {
-                    dee->acceptProposedAction();
-                }
-                else if (txt.section(':', 0, 0) == "samplefile") { dee->acceptProposedAction(); }
-                else { dee->ignore(); }
-            }
-            else { dee->ignore(); }
-        }
-
-        void WaverWidgetView::dropEvent(QDropEvent* de)
-        {
-            QString type = StringPairDrag::decodeKey(de);
-            QString value = StringPairDrag::decodeValue(de);
-            if (type == "samplefile")
-            {
-                // set m_wf wave file
-                m_waverParent->updateFile(value);
-                return;
-            }
-            else if (type == QString("clip_%1").arg(static_cast<int>(Track::Type::Sample)))
-            {
-                DataFile dataFile(value.toUtf8());
-                m_waverParent->updateFile(dataFile.content().firstChild().toElement().attribute("src"));
-                de->accept();
-                return;
-            }
-
-            de->ignore();
-        }
-
-    } // namespace gui
+} // namespace gui
 
 } // namespace lmms

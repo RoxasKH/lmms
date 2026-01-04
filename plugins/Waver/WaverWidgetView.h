@@ -31,32 +31,32 @@ class QPushButton;
 
 namespace lmms {
 
-    class Waver;
+class Waver;
 
-    namespace gui {
+namespace gui {
 
-        class WaverWidgetView : public InstrumentView
-        {
-            Q_OBJECT
+class WaverWidgetView : public InstrumentView
+{
+    Q_OBJECT
 
-            public slots:
-                void openFiles();
+public slots:
+    void openFiles();
 
-            public:
-                WaverWidgetView(Waver* instrument, QWidget* parent);
+public:
+    WaverWidgetView(Waver* instrument, QWidget* parent);
 
-            protected:
-                void dragEnterEvent(QDragEnterEvent* dee) override;
-                void dropEvent(QDropEvent* de) override;
+protected:
+    void dragEnterEvent(QDragEnterEvent* dee) override;
+    void dropEvent(QDropEvent* de) override;
 
-            private:
-                bool isResizable() const override { return true; }
+private:
+    bool isResizable() const override { return true; }
 
-                Waver* m_waverParent;
-        };
+    Waver* m_waverParent;
+};
 
-    } // namespace gui
+} // namespace gui
 
 } // namespace lmms
 
-#endif // LMMS_GUI_SLICERT_VIEW_H
+#endif // LMMS_GUI_WAVER_VIEW_H
