@@ -25,55 +25,60 @@
 #ifndef WAVER_H
 #define WAVER_H
 
+#include <vector>
+
 #include "AutomatableModel.h"
 #include "ComboBoxModel.h"
 #include "Instrument.h"
 #include "Note.h"
 #include "Sample.h"
 #include "WaverWidgetView.h"
+#include "WaverSampleMap.h"
 
 namespace lmms {
 
-    class Waver : public Instrument
-    {
-        Q_OBJECT
-        Q_PROPERTY(QString name READ name)
+class Waver : public Instrument
+{
+    Q_OBJECT
+    Q_PROPERTY(QString name READ name)
 
-        public slots:
-            void updateFile(QString file);
+public slots:
+    void updateFile(QString file);
 
-        public:
-            Waver(InstrumentTrack* instrumentTrack);
+public:
+    Waver(InstrumentTrack* instrumentTrack);
 
-            void loadFile(const QString& file) override;
+    void loadFile(const QString& file) override;
 
-            void saveSettings(QDomDocument& document, QDomElement& element) override;
-	        void loadSettings(const QDomElement& element) override;
+    void saveSettings(QDomDocument& document, QDomElement& element) override;
+    void loadSettings(const QDomElement& element) override;
 
-            QString getSampleName() { return m_originalSample.sampleFile(); }
+    QString getSampleName() { return m_originalSample.sampleFile(); }
 
-            QString nodeName() const override;
-            gui::PluginView* instantiateView(QWidget* parent) override;
+    QString nodeName() const override;
+    gui::PluginView* instantiateView(QWidget* parent) override;
 
-            QString name() const { return m_name; }
+    QString name() const { return m_name; }
 
-        private:
-            FloatModel m_noteThreshold;
-            FloatModel m_fadeOutFrames;
-            IntModel m_originalBPM;
-            ComboBoxModel m_sliceSnap;
-            BoolModel m_enableSync;
+private:
+    FloatModel m_noteThreshold;
+    FloatModel m_fadeOutFrames;
+    IntModel m_originalBPM;
+    ComboBoxModel m_sliceSnap;
+    BoolModel m_enableSync;
 
-            QString m_name = "Waver";
+    QString m_name = "Waver";
 
-            Sample m_originalSample;
+    Sample m_originalSample;
 
-            std::vector<float> m_slicePoints;
+    std::vector<float> m_slicePoints;
 
-            InstrumentTrack* m_parentTrack;
+    InstrumentTrack* m_parentTrack;
 
-            friend class gui::WaverWidgetView;
-    };
+    friend class gui::WaverWidgetView;
+
+    std::vector<WaverSampleMap> m_sampleMap;
+};
 
 } // namespace lmms
 
