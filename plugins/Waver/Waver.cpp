@@ -31,7 +31,6 @@
 #include "Engine.h"
 #include "InstrumentTrack.h"
 #include "PathUtil.h"
-#include "SampleLoader.h"
 #include "WaverWidgetView.h"
 #include "Song.h"
 #include "embed.h"
@@ -76,7 +75,7 @@ Waver::Waver(InstrumentTrack* instrumentTrack)
 
 void Waver::updateFile(QString file)
 {
-    if (auto buffer = gui::SampleLoader::createBufferFromFile(file)) { m_originalSample = Sample(std::move(buffer)); }
+    if (auto buffer = SampleBuffer::fromFile(file)) { m_originalSample = Sample(std::move(buffer)); }
 
     emit dataChanged();
 }
@@ -113,7 +112,7 @@ void Waver::loadSettings(const QDomElement& element)
     {
         if (QFileInfo(PathUtil::toAbsolute(srcFile)).exists())
         {
-            auto buffer = gui::SampleLoader::createBufferFromFile(srcFile);
+            auto buffer = SampleBuffer::fromFile(srcFile);
             m_originalSample = Sample(std::move(buffer));
         }
         else
@@ -124,7 +123,7 @@ void Waver::loadSettings(const QDomElement& element)
     }
     else if (auto sampleData = element.attribute("sampledata"); !sampleData.isEmpty())
     {
-        auto buffer = gui::SampleLoader::createBufferFromBase64(sampleData);
+        auto buffer = SampleBuffer::fromBase64(sampleData);
         m_originalSample = Sample(std::move(buffer));
     }
 

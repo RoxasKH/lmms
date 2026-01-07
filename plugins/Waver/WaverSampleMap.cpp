@@ -26,7 +26,6 @@
 
 #include "InstrumentTrack.h"
 #include "PathUtil.h"
-#include "SampleLoader.h"
 #include "Song.h"
 
 #include "LmmsTypes.h"
@@ -169,7 +168,7 @@ auto WaverSampleMap::beatLen(NotePlayHandle* note) const -> f_cnt_t
 
 void WaverSampleMap::setAudioFile(const QString& _audio_file, bool _rename)
 {
-	m_sample = Sample(gui::SampleLoader::createBufferFromFile(_audio_file));
+	m_sample = Sample(SampleBuffer::fromFile(_audio_file));
 }
 
 void WaverSampleMap::pointChanged()
