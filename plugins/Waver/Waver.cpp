@@ -27,6 +27,7 @@
 #include <QDomElement>
 #include <cmath>
 #include <fftw3.h>
+#include <QList>
 
 #include "Engine.h"
 #include "InstrumentTrack.h"
@@ -62,6 +63,7 @@ Waver::Waver(InstrumentTrack* instrumentTrack)
     , m_enableSync(false, this, tr("BPM sync"))
     , m_originalSample()
     , m_parentTrack(instrumentTrack)
+    , m_selectedSampleMap(nullptr)
 {
     m_sliceSnap.addItem("Off");
     m_sliceSnap.addItem("1/1");
@@ -83,6 +85,37 @@ void Waver::updateFile(QString file)
 void Waver::loadFile(const QString& file)
 {
     updateFile(file);
+}
+
+void Waver::createSampleMap(QString file)
+{
+    auto sampleMap = new WaverSampleMap(this);
+    sampleMap->setAudioFile(file);
+    m_sampleMap.append(sampleMap);
+    selectSampleMap(sampleMap);
+
+    emit sampleMapChanged();
+    emit selectedSampleMapChanged();
+}
+
+void Waver::selectSampleMap(WaverSampleMap* sampleMap)
+{
+    m_selectedSampleMap = sampleMap;
+    emit selectedSampleMapChanged();
+}
+
+void Waver::playNote(NotePlayHandle* handle, SampleFrame* workingBuffer)
+{
+    if (m_selectedSampleMap == nullptr) { return; }
+
+    m_selectedSampleMap->playNote(handle, workingBuffer);
+}
+
+void Waver::deleteNotePluginData(NotePlayHandle* handle)
+{
+    // TODO
+	delete static_cast<Sample::PlaybackState*>(handle->m_pluginData);
+	//emit isPlaying(-1, 0, 0);
 }
 
 void Waver::saveSettings(QDomDocument& document, QDomElement& element)

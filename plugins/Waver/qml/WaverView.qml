@@ -19,8 +19,20 @@ Rectangle {
         anchors.margins: theme.spacing.m
 
         WaverContainer {
+            leftPadding: 20
+            rightPadding: 20
+
+            FontLoader {
+                id: ava
+                source: "ava.ttf"
+            }
+
             WaverText {
-                text: waverModel.name
+                id: logo
+                text: waverModel.instrument.name
+                font.family: ava.name
+                font.pointSize: 24
+                font.bold: true
                 Layout.fillWidth: true
             }
         }
@@ -39,6 +51,14 @@ Rectangle {
 
                     content: ColumnLayout {
                         spacing: theme.spacing.l
+
+                        WaverComboBox {
+                            model: waverModel.instrument.sampleMap
+                            textRole: "name"
+                            onItemSelected: waverModel.instrument.selectSampleMap
+
+                            selectedModel: waverModel.instrument.selectedSampleMap
+                        }
 
                         Rectangle {
                             Layout.fillWidth: true
@@ -74,10 +94,11 @@ Rectangle {
                             }
 
                             WaverButton {
-                                text: qsTr("Settings")  // Custom title
+                                text: qsTr("Load file")  // Custom title
                                 // Custom click action (when the button is clicked)
                                 onClicked: {
-                                    console.log("Settings button clicked!")
+                                    console.log("Load file button clicked!")
+                                    waverModel.openFiles()
                                     // Additional code or actions you want to trigger on click
                                 }
                                 Layout.alignment: Qt.AlignTop

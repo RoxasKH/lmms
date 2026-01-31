@@ -31,34 +31,35 @@
 #include "ComboBoxModel.h"
 
 #include "Instrument.h"
+#include "Note.h"
 #include "Sample.h"
 #include "LmmsTypes.h"
-
+#include "NotePlayHandle.h"
 
 namespace lmms
 {
 
-class WaverSampleMap
+class WaverSampleMap: public QObject
 {
 	Q_OBJECT
-public:
-	WaverSampleMap(float _baseFreq);
+	Q_PROPERTY(QString name READ name CONSTANT)
 
-	void playNote(NotePlayHandle * _n, SampleFrame* _working_buffer) override;
-	void deleteNotePluginData(NotePlayHandle * _n) override;
+public:
+	WaverSampleMap(Instrument* parent);
+
+	void playNote(NotePlayHandle * _n, SampleFrame* _working_buffer);
+	void deleteNotePluginData(NotePlayHandle * _n);
 
 	void setAudioFile(const QString& _audio_file, bool _rename = true);
 
-	QString nodeName() const override;
+	auto beatLen(NotePlayHandle* note, float _baseFreq) const -> f_cnt_t;
 
-	auto beatLen(NotePlayHandle* note) const -> f_cnt_t override;
-
-	float desiredReleaseTimeMs() const override
+	float desiredReleaseTimeMs() const
 	{
 		return 3.f;
 	}
 
-	gui::PluginView* instantiateView(QWidget * _parent) override;
+	gui::PluginView* instantiateView(QWidget * _parent);
 
 	Sample const & sample() const { return m_sample; }
 
@@ -70,10 +71,12 @@ public:
 	IntModel & loopModel() { return m_loopModel; }
 	BoolModel & stutterModel() { return m_stutterModel; }
 	ComboBoxModel & interpolationModel() { return m_interpolationModel; }
+	QString & name() { return m_name; }
 
 private:
 	Sample m_sample;
 
+	QObject* m_parent;
 	FloatModel m_ampModel;
 	FloatModel m_startPointModel;
 	FloatModel m_endPointModel;
@@ -82,7 +85,7 @@ private:
 	IntModel m_loopModel;
 	BoolModel m_stutterModel;
 	ComboBoxModel m_interpolationModel;
-	float m_baseFreq;
+	QString m_name;
 
 	f_cnt_t m_nextPlayStartPoint;
 	bool m_nextPlayBackwards;

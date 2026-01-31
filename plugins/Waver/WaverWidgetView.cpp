@@ -44,7 +44,7 @@ You have to install qt5-declarative qt5-quickcontrols2
 #include "DataFile.h"
 #include "InstrumentView.h"
 #include "PixmapButton.h"
-#include "SampleLoader.h"
+#include "FileDialog.h"
 #include "Waver.h"
 #include "StringPairDrag.h"
 #include "Track.h"
@@ -73,15 +73,33 @@ WaverWidgetView::WaverWidgetView(Waver* instrument, QWidget* parent)
 
     // Set up the QQuickWidget
     QQuickWidget *quickWidget = new QQuickWidget(this);
+    quickWidget->setClearColor(Qt::transparent); // make background transparent
+    quickWidget->setAttribute(Qt::WA_TranslucentBackground); // allow transparency
 
-    // Expose the model to QML
-    // Use setInitialProperties() once on QT6 for better performance
-    quickWidget->rootContext()->setContextProperty("waverModel", instrument);
+    // Allow QML to know about the WaverWidgetView type
+    qmlRegisterUncreatableType<WaverWidgetView>(
+        "WaverWidgetView", 1, 0, "WaverWidgetView",
+        "Instrument is provided by C++"
+    );
 
+    // Allow QML to know about the Waver type
     qmlRegisterUncreatableType<Waver>(
         "Waver", 1, 0, "Waver",
         "Instrument is provided by C++"
     );
+    // Had to add this meta type to be able to expose a pointer variable to QML
+    // https://forum.qt.io/topic/113897/qml-c-exposing-pointer-type-attribute-to-qml
+    qRegisterMetaType<WaverSampleMap*>("WaverSampleMap*");
+    qRegisterMetaType<Waver*>("Waver*");
+    qRegisterMetaType<lmms::WaverSampleMap*>("lmms::WaverSampleMap*");
+
+
+    // Expose the model to QML
+    // Use setInitialProperties() once on QT6 for better performance
+    quickWidget->rootContext()->setContextProperty("waverModel", this);
+
+    // Keep track of the height of the plugin view in a waverHeight variable for QML purposes
+    m_waverHeightGetter = [quickWidget]() { return quickWidget->height(); };
 
     quickWidget->setSource(QUrl(QStringLiteral("qrc:/artwork/waver/WaverView.qml")));
     quickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
@@ -92,11 +110,21 @@ WaverWidgetView::WaverWidgetView(Waver* instrument, QWidget* parent)
     update();
 }
 
+void WaverWidgetView::resizeEvent(QResizeEvent* event)
+{
+    // Call base impementation
+    QWidget::resizeEvent(event);
+
+    // Notify QML that waverHeight changed
+    emit waverHeightChanged();
+}
+
 void WaverWidgetView::openFiles()
 {
-    const auto audioFile = SampleLoader::openAudioFile();
+    const auto audioFile = FileDialog::openAudioFile();
     if (audioFile.isEmpty()) { return; }
-    m_waverParent->updateFile(audioFile);
+    //m_waverParent->updateFile(audioFile);
+    m_waverParent->createSampleMap(audioFile);
 }
 
 // all the drag stuff is copied from AudioFileProcessor

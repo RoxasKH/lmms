@@ -8,8 +8,10 @@ build_plugin(waver
 	Waver.h
 	WaverWidgetView.cpp
 	WaverWidgetView.h
-	MOCFILES Waver.h WaverWidgetView.h
-	EMBEDDED_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.png" "${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml"
+	WaverSampleMap.cpp
+	WaverSampleMap.h
+	MOCFILES Waver.h WaverWidgetView.h WaverSampleMap.h
+	EMBEDDED_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.png" "${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*.ttf"
 )
 
 target_link_libraries(waver SampleRate::samplerate)

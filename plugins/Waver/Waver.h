@@ -25,7 +25,7 @@
 #ifndef WAVER_H
 #define WAVER_H
 
-#include <vector>
+#include <QList>
 
 #include "AutomatableModel.h"
 #include "ComboBoxModel.h"
@@ -40,7 +40,9 @@ namespace lmms {
 class Waver : public Instrument
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QList<WaverSampleMap*> sampleMap READ sampleMap NOTIFY sampleMapChanged)
+    Q_PROPERTY(WaverSampleMap* selectedSampleMap READ selectedSampleMap NOTIFY selectedSampleMapChanged)
 
 public slots:
     void updateFile(QString file);
@@ -49,6 +51,12 @@ public:
     Waver(InstrumentTrack* instrumentTrack);
 
     void loadFile(const QString& file) override;
+
+    void createSampleMap(QString file);
+    Q_INVOKABLE void selectSampleMap(WaverSampleMap* sampleMap);
+
+    void playNote(NotePlayHandle* handle, SampleFrame* workingBuffer) override;
+	void deleteNotePluginData(NotePlayHandle* handle) override;
 
     void saveSettings(QDomDocument& document, QDomElement& element) override;
     void loadSettings(const QDomElement& element) override;
@@ -59,6 +67,13 @@ public:
     gui::PluginView* instantiateView(QWidget* parent) override;
 
     QString name() const { return m_name; }
+    QList<WaverSampleMap*> sampleMap() const { return m_sampleMap; };
+    WaverSampleMap* selectedSampleMap() const { return m_selectedSampleMap; };
+    
+
+signals:
+    void sampleMapChanged();
+	void selectedSampleMapChanged();
 
 private:
     FloatModel m_noteThreshold;
@@ -77,7 +92,8 @@ private:
 
     friend class gui::WaverWidgetView;
 
-    std::vector<WaverSampleMap> m_sampleMap;
+    QList<WaverSampleMap*> m_sampleMap;
+    WaverSampleMap* m_selectedSampleMap;
 };
 
 } // namespace lmms

@@ -25,6 +25,8 @@
 #ifndef LMMS_GUI_WAVER_VIEW_H
 #define LMMS_GUI_WAVER_VIEW_H
 
+#include <QQuickWidget>
+
 #include "InstrumentView.h"
 
 class QPushButton;
@@ -38,21 +40,34 @@ namespace gui {
 class WaverWidgetView : public InstrumentView
 {
     Q_OBJECT
+    Q_PROPERTY(Waver* instrument READ instrument CONSTANT)
+    // Keep track of height changes, needed in QML combobox
+    Q_PROPERTY(int waverHeight READ waverHeight NOTIFY waverHeightChanged)
 
 public slots:
-    void openFiles();
+    Q_INVOKABLE void openFiles();
 
 public:
     WaverWidgetView(Waver* instrument, QWidget* parent);
 
+    Waver* instrument() { return m_waverParent; }
+
+    int waverHeight() const { return m_waverHeightGetter ? m_waverHeightGetter() : 0; }
+
+signals:
+    void waverHeightChanged();
+
 protected:
     void dragEnterEvent(QDragEnterEvent* dee) override;
     void dropEvent(QDropEvent* de) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     bool isResizable() const override { return true; }
 
     Waver* m_waverParent;
+
+    std::function<int()> m_waverHeightGetter;
 };
 
 } // namespace gui

@@ -24,9 +24,9 @@
 
 #include "WaverSampleMap.h"
 
-#include "InstrumentTrack.h"
 #include "PathUtil.h"
 #include "Song.h"
+#include "NotePlayHandle.h"
 
 #include "LmmsTypes.h"
 #include "plugin_export.h"
@@ -37,22 +37,21 @@
 namespace lmms
 {
 
-WaverSampleMap::WaverSampleMap(float _baseFreq) :
-	m_ampModel( 100, 0, 500, 1, this, tr( "Amplify" ) ),
-	m_startPointModel( 0, 0, 1, 0.0000001f, this, tr( "Start of sample" ) ),
-	m_endPointModel( 1, 0, 1, 0.0000001f, this, tr( "End of sample" ) ),
-	m_loopPointModel( 0, 0, 1, 0.0000001f, this, tr( "Loopback point" ) ),
-	m_reverseModel( false, this, tr( "Reverse sample" ) ),
-	m_loopModel( 0, 0, 2, this, tr( "Loop mode" ) ),
-	m_stutterModel( false, this, tr( "Stutter" ) ),
-	m_interpolationModel( this, tr( "Interpolation mode" ) ),
+WaverSampleMap::WaverSampleMap(Instrument* parent)
+	: QObject(parent),
+	m_ampModel( 100, 0, 500, 1, parent, tr( "Amplify" ) ),
+	m_startPointModel( 0, 0, 1, 0.0000001f, parent, tr( "Start of sample" ) ),
+	m_endPointModel( 1, 0, 1, 0.0000001f, parent, tr( "End of sample" ) ),
+	m_loopPointModel( 0, 0, 1, 0.0000001f, parent, tr( "Loopback point" ) ),
+	m_reverseModel( false, parent, tr( "Reverse sample" ) ),
+	m_loopModel( 0, 0, 2, parent, tr( "Loop mode" ) ),
+	m_stutterModel( false, parent, tr( "Stutter" ) ),
+	m_interpolationModel( parent, tr( "Interpolation mode" ) ),
 	m_nextPlayStartPoint( 0 ),
 	m_nextPlayBackwards( false )
 {
 
-	m_baseFreq = baseFreq;
-
-//interpolation modes
+	//interpolation modes
 	m_interpolationModel.addItem(tr("None"));
 	m_interpolationModel.addItem(tr("Linear"));
 	m_interpolationModel.addItem(tr("Sinc"));
@@ -120,7 +119,8 @@ void WaverSampleMap::playNote(NotePlayHandle * _n, SampleFrame* _working_buffer)
 						frames, static_cast<Sample::Loop>(m_loopModel.value()),
 						DefaultBaseFreq / _n->frequency()))
 		{
-			applyRelease( _working_buffer, _n );
+			// TODO: understand if actually needed
+			//applyRelease( _working_buffer, _n );
 		}
 		else
 		{
@@ -142,18 +142,12 @@ void WaverSampleMap::deleteNotePluginData( NotePlayHandle * _n )
 	delete static_cast<Sample::PlaybackState*>(_n->m_pluginData);
 }
 
-void WaverSampleMap::loadFile( const QString & _file )
-{
-	setAudioFile( _file );
-}
-
-auto WaverSampleMap::beatLen(NotePlayHandle* note) const -> f_cnt_t
+auto WaverSampleMap::beatLen(NotePlayHandle* note, float baseFreq) const -> f_cnt_t
 {
 	// If we can play indefinitely, use the default beat note duration
 	if (static_cast<Sample::Loop>(m_loopModel.value()) != Sample::Loop::Off) { return 0; }
 
 	// Otherwise, use the remaining sample duration
-	const auto baseFreq = instrumentTrack()->baseFreq();
 	const auto freqFactor = baseFreq / note->frequency()
 		* Engine::audioEngine()->outputSampleRate()
 		/ Engine::audioEngine()->baseSampleRate();
@@ -169,6 +163,7 @@ auto WaverSampleMap::beatLen(NotePlayHandle* note) const -> f_cnt_t
 void WaverSampleMap::setAudioFile(const QString& _audio_file, bool _rename)
 {
 	m_sample = Sample(SampleBuffer::fromFile(_audio_file));
+	m_name = QFileInfo(_audio_file).fileName();
 }
 
 void WaverSampleMap::pointChanged()
