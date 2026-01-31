@@ -34,6 +34,7 @@ class QPushButton;
 namespace lmms {
 
 class Waver;
+class WaverSampleMap;
 
 namespace gui {
 

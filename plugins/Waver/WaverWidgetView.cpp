@@ -91,8 +91,6 @@ WaverWidgetView::WaverWidgetView(Waver* instrument, QWidget* parent)
     // https://forum.qt.io/topic/113897/qml-c-exposing-pointer-type-attribute-to-qml
     qRegisterMetaType<WaverSampleMap*>("WaverSampleMap*");
     qRegisterMetaType<Waver*>("Waver*");
-    qRegisterMetaType<lmms::WaverSampleMap*>("lmms::WaverSampleMap*");
-
 
     // Expose the model to QML
     // Use setInitialProperties() once on QT6 for better performance
