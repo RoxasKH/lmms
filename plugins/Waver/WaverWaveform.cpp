@@ -62,7 +62,7 @@ QSGNode* WaverWaveform::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     peakNode->setFlag(QSGNode::OwnsGeometry);
 
     auto* peakMaterial = new QSGFlatColorMaterial();
-    peakMaterial->setColor(m_waveformColor); // waveform color
+    peakMaterial->setColor(m_waveformColor.darker(125)); // waveform color
     peakMaterial->setFlag(QSGMaterial::Blending);
     peakNode->setMaterial(peakMaterial);
     peakNode->setFlag(QSGNode::OwnsMaterial);
@@ -118,9 +118,7 @@ QSGNode* WaverWaveform::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     rmsNode->setFlag(QSGNode::OwnsGeometry);
 
     auto* rmsMaterial = new QSGFlatColorMaterial();
-    QColor rmsColor = m_waveformColor.darker(125); // RMS 25% darker than waveform
-    rmsColor.setAlpha(180); // semi-transparent
-    rmsMaterial->setColor(rmsColor);
+    rmsMaterial->setColor(m_waveformColor);
     rmsMaterial->setFlag(QSGMaterial::Blending);
     rmsNode->setMaterial(rmsMaterial);
     rmsNode->setFlag(QSGNode::OwnsMaterial);
