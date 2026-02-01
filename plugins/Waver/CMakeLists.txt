@@ -10,7 +10,9 @@ build_plugin(waver
 	WaverWidgetView.h
 	WaverSampleMap.cpp
 	WaverSampleMap.h
-	MOCFILES Waver.h WaverWidgetView.h WaverSampleMap.h
+	WaverWaveform.cpp
+	WaverWaveform.h
+	MOCFILES Waver.h WaverWidgetView.h WaverSampleMap.h WaverWaveform.h
 	EMBEDDED_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.png" "${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml" "${CMAKE_CURRENT_SOURCE_DIR}/fonts/*.ttf"
 )
 

@@ -73,6 +73,9 @@ public:
 	ComboBoxModel & interpolationModel() { return m_interpolationModel; }
 	QString & name() { return m_name; }
 
+signals:
+	void sampleChanged();
+
 private:
 	Sample m_sample;
 

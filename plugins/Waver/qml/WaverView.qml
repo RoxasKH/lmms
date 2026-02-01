@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15 // Import Layouts module
+import Lmms.Visualizers 1.0
 
 Rectangle {
 
@@ -71,11 +72,13 @@ Rectangle {
                                 gridRows: 4
                                 gridColor: theme.colors.primaryDark
                             }
-
-                            Image {
+                            
+                            WaverWaveform {
+                                id: waveform
                                 anchors.fill: parent
-                                source: ""
-                                z: 1
+
+                                map: waverModel.instrument.selectedSampleMap
+                                color: theme.colors.primary
                             }
                         }
 

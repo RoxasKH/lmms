@@ -39,6 +39,7 @@ You have to install qt5-declarative qt5-quickcontrols2
 #include <QQmlEngine>
 #include <QQmlContext>
 #include <QResource>
+#include <QQmlEngine>
 
 #include "Clipboard.h"
 #include "DataFile.h"
@@ -49,6 +50,7 @@ You have to install qt5-declarative qt5-quickcontrols2
 #include "StringPairDrag.h"
 #include "Track.h"
 #include "embed.h"
+#include "WaverWaveform.h"
 
 namespace lmms {
 
@@ -91,6 +93,14 @@ WaverWidgetView::WaverWidgetView(Waver* instrument, QWidget* parent)
     // https://forum.qt.io/topic/113897/qml-c-exposing-pointer-type-attribute-to-qml
     qRegisterMetaType<WaverSampleMap*>("WaverSampleMap*");
     qRegisterMetaType<Waver*>("Waver*");
+    qRegisterMetaType<Sample*>("Sample*");
+
+    // Register custom Waveform visualizer component
+    qmlRegisterType<lmms::gui::WaverWaveform>(
+        "Lmms.Visualizers", // module name (you choose)
+        1, 0, // version
+        "WaverWaveform" // QML type name
+    );
 
     // Expose the model to QML
     // Use setInitialProperties() once on QT6 for better performance

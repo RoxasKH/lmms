@@ -164,6 +164,7 @@ void WaverSampleMap::setAudioFile(const QString& _audio_file, bool _rename)
 {
 	m_sample = Sample(SampleBuffer::fromFile(_audio_file));
 	m_name = QFileInfo(_audio_file).fileName();
+	emit sampleChanged();
 }
 
 void WaverSampleMap::pointChanged()
